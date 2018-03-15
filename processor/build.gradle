@@ -1,0 +1,10 @@
+plugins {
+	id 'java'
+}
+
+dependencies {
+	compile project(':annotations')
+	compile 'com.squareup:javapoet:1.10.0'
+	compileOnly 'org.projectlombok:lombok:1.16.18'
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc4'
+}

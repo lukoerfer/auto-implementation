@@ -1,0 +1,27 @@
+plugins {
+    id 'maven-publish'
+}
+
+
+allprojects {
+	group = 'de.lukaskoerfer.implementations'
+	version = '0.1'
+
+	repositories {
+		jcenter()
+	}
+}
+
+publishing {
+    publications {
+        annotations(MavenPublication) {
+        	artifactId 'annotations'
+            from project(':annotations').components.java
+        }
+        processor(MavenPublication) {
+        	artifactId 'processor'
+            from project(':processor').components.java
+        }
+
+    }
+}
