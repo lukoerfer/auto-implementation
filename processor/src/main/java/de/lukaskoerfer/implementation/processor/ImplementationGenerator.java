@@ -117,7 +117,7 @@ public class ImplementationGenerator {
 	
 	private CodeBlock buildStatement(TypeMirror returnType) {
 		TypeKind typeKind = returnType.getKind();
-		return MethodHandler.get(implementation, typeKind).createStatement();
+		return MethodHandler.create(implementation, typeKind).createStatement();
 	}
 	
 }

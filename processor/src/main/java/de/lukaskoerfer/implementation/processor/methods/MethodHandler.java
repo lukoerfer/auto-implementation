@@ -14,7 +14,7 @@ public abstract class MethodHandler {
 	protected final Implementation implementation;
 	
 	public CodeBlock createStatement() {
-		if (Statement.firstDefined(implementation.allMethods(), getStatementType(), Statement.RETURN) == Statement.RETURN) {
+		if (Statement.firstDefined(getStatementType(), implementation.allMethods(), Statement.RETURN) == Statement.RETURN) {
 			return createReturnStatement();
 		} else {
 			return CodeBlock.of("throw new $T()", UnsupportedOperationException.class);
@@ -25,7 +25,7 @@ public abstract class MethodHandler {
 	
 	protected abstract Statement getStatementType();
 	
-	public static MethodHandler get(Implementation implementation, TypeKind kind) {
+	public static MethodHandler create(Implementation implementation, TypeKind kind) {
 		switch (kind) {
 		case VOID:
 			return new VoidMethodHandler(implementation);
