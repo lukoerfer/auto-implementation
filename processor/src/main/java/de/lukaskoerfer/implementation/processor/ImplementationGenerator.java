@@ -1,8 +1,13 @@
 package de.lukaskoerfer.implementation.processor;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 import javax.lang.model.element.Element;
@@ -37,7 +42,7 @@ public class ImplementationGenerator {
 	private final TypeElement source;
 	
 	public JavaFile generate() {
-		TypeSpec.Builder builder = TypeSpec.classBuilder(getTargetName())
+		TypeSpec.Builder builder = TypeSpec.classBuilder(getName())
 			.addAnnotation(createGeneratedAnnotation())
 			.addModifiers(getModifiers(source))
 			.addTypeVariables(getTypeParameters(source))
@@ -52,7 +57,7 @@ public class ImplementationGenerator {
 		return JavaFile.builder(getPackageName(), targetType).build();
 	}
 	
-	private String getTargetName() {
+	private String getName() {
 		String sourceName = source.getSimpleName().toString();
 		String targetName = implementation.name();
 		if (targetName.isEmpty()) {
@@ -64,9 +69,15 @@ public class ImplementationGenerator {
 	private String getPackageName() {
 		String sourcePackage = elements.getPackageOf(source).getQualifiedName().toString();
 		String targetPackage = String.format(implementation.packageName(), sourcePackage);
-		if (targetPackage.isEmpty()) {
-			targetPackage = sourcePackage;
-		}
+		ArrayDeque<String> components = new ArrayDeque<>();
+		Stream.of(targetPackage.split("\\.")).forEachOrdered(component -> {
+			if (component.equals("-")) {
+				components.pollLast();
+			} else {
+				components.add(component);
+			}
+		});
+		targetPackage = components.stream().collect(Collectors.joining("."));
 		return targetPackage;
 	}
 	
