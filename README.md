@@ -48,7 +48,7 @@ You can use **name** to directly specify a name:
     @Implementation(name="MyInterfaceImplementation")
     public interface MyInterface { }
     
-However, you may want to generate the class name dynamically based on the name of the annotated interface or class. Just use the **nameFormat** parameter to choose how the name should be generated. For specific choices of the **nameFormat** parameter, the **nameParam** parameter may provide additional flexibility. The different choices for the **nameFormat** parameter (from the `NameFormat` enum) are explained below:
+However, you may want to generate the class name dynamically based on the name of the annotated interface or class. Just use the **nameFormat** parameter to choose how the name should be generated (according to your naming conventions). For specific choices of the **nameFormat** parameter, the **nameParam** parameter may provide additional flexibility. The different choices for the **nameFormat** parameter (from the `NameFormat` enum) are explained below:
 
 #### DEFAULT (the default option)
 
@@ -128,6 +128,18 @@ Uses the **nameParam** parameter as format for the `String.format` method. The n
 The implementation class will be named `DefaultListenerAdapter`. If no **nameParam** parameter is provided, the format will default to `Default%s` (equal to the **DEFAULT** name format).
 
 ### Package name
+
+By default, the implementation class will be put into the same package as the annotated element. Using the **packageName** parameter, you can modify the target package. Either specify an absolute package name or pass a format string with `%s` as placeholder for the package name of the annotated element (for relative package names):
+
+    @Implementation(packageName="%s.implementation")
+    // "com.test.interfaces" => "com.test.interfaces.implementation"
+    
+You can use hyphens (`-`) as package components to walk back in the package tree:
+
+    @Implementation(packageName="%s.-.implementation")
+    // "com.test.interfaces" => "com.test.implementation"
+    
+### Method code blocks
 
 
 
