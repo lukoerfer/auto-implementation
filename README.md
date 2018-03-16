@@ -24,12 +24,12 @@ Generated code:
         public void onShow() {
             return;
         }
-        public void onHide{
+        public void onHide() {
             return;
         }
     }
     
-The annotation provides the following parameters to configure the resulting implementation class (see below for details on their impact):
+The implementation class name and package may be modified as well as the code blocks used in the method implementations by using the following parameters below:
 
 * **name** - a `String`, defaults to an empty string
 * **nameFormat** - on from the `NameFormat` enum, defaults to `NameFormat.DEFAULT`
@@ -127,5 +127,16 @@ Uses the **nameParam** parameter as format for the `String.format` method. The n
     
 The implementation class will be named `DefaultListenerAdapter`. If no **nameParam** parameter is provided, the format will default to `Default%s` (equal to the **DEFAULT** name format).
 
-## Package name
+### Package name
 
+
+
+## License
+
+Copyright 2018 Lukas Körfer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
