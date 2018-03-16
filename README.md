@@ -9,8 +9,24 @@ Reduce boilerplate code (and modification effort) by automatically generating de
 Simply add the `Implementation` annotation on an interface or abstract class. It is possible to use the annotation multiple times on the same element. The annotation processor will create a new class for each provided annotation. Each new class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
 
     @Implementation
-    public interface MyInterface {
-        // ...
+    public interface Listener {
+        boolean isActive();
+        void onShow();
+        void onHide();
+    }
+    
+Generated code:
+
+    public class DefaultListener implements Listener {
+        public boolean isActive() {
+            return false;
+        }
+        public void onShow() {
+            return;
+        }
+        public void onHide{
+            return;
+        }
     }
     
 The annotation provides the following parameters to configure the resulting implementation class (see below for details on their impact):
@@ -36,4 +52,80 @@ However, you may want to generate the class name dynamically based on the name o
 
 #### DEFAULT (the default option)
 
-Adds the suffix `Default` to the name of the annotated element:
+Adds the prefix `Default` to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.DEFAULT) // or simply @Implementation
+    public interface Listener { }
+
+The implementation class will be named `DefaultListener`.
+
+#### ADAPTER
+
+Adds the suffix `Adapter` to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.ADAPTER)
+    public interface Listener { }
+
+The implementation class will be named `ListenerAdapter`.
+
+#### IMPL
+
+Adds the suffix `Impl` to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.IMPL)
+    public interface Listener { }
+
+The implementation class will be named `ListenerImpl`.
+
+#### ABSTRACT
+
+If the name of the annotated element starts with the prefix `Abstract`, the prefix will be removed from the name. Otherwise, the prefix `Abstract` will be added to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.ABSTRACT)
+    public interface Listener { }
+
+The implementation class will be named `AbstractListener`.
+
+    @Implementation(nameFormat=NameFormat.ABSTRACT)
+    public interface AbstractListener { }
+
+The implementation class will be named `Listener`.
+
+#### ADD_PREFIX
+
+Adds the **nameParam** parameter as prefix to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.ADD_PREFIX, nameParam="My")
+    public interface Listener { }
+
+The implementation class will be named `MyListener`. If no **nameParam** parameter is provided, the prefix will default to `Default` (equal to the **DEFAULT** name format).
+
+#### ADD_SUFFIX
+
+Adds the **nameParam** parameter as prefix to the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.ADD_SUFFIX, nameParam="Class")
+    public interface Listener { }
+
+The implementation class will be named `ListenerClass`. If no **nameParam** parameter is provided, the suffix will default to `Adapter` (equal to the **ADAPTER** name format).
+
+#### REMOVE_PREFIX
+
+Removes the **nameParam** parameter as prefix from the name of the annotated element:
+
+    @Implementation(nameFormat=NameFormat.REMOVE_PREFIX, nameParam="I")
+    public interface IListener { }
+
+The implementation class will be named `Listener`. If no **nameParam** parameter is provided, the prefix will default to `Abstract` (equal to the **ABSTRACT** name format, but removal only).
+
+#### CUSTOM
+
+Uses the **nameParam** parameter as format for the `String.format` method. The name of the annotated element will be passed as single argument:
+
+    @Implementation(nameFormat=NameFormat.CUSTOM, nameParam="Default%sAdapter")
+    public interface Listener { }
+    
+The implementation class will be named `DefaultListenerAdapter`. If no **nameParam** parameter is provided, the format will default to `Default%s` (equal to the **DEFAULT** name format).
+
+## Package name
+
