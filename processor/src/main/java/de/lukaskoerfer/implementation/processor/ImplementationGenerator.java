@@ -1,13 +1,8 @@
 package de.lukaskoerfer.implementation.processor;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Generated;
 import javax.lang.model.element.Element;
@@ -15,16 +10,17 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Parameterizable;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
@@ -36,21 +32,22 @@ import lombok.Builder;
 @Builder
 public class ImplementationGenerator {
 	
-	private final Elements elements;
+	private final Elements elementUtils;
+	private final Types typeUtils;
 	
 	private final Implementation implementation;
-	private final TypeElement source;
+	private final TypeElement target;
 	
 	public JavaFile generate() {
 		TypeSpec.Builder builder = TypeSpec.classBuilder(getName())
 			.addAnnotation(createGeneratedAnnotation())
-			.addModifiers(getModifiers(source))
-			.addTypeVariables(getTypeParameters(source))
+			.addModifiers(getModifiers(target))
+			.addTypeVariables(getTypeParameters(target))
 			.addMethods(createMethodSpecs());
-		TypeName sourceType = TypeName.get(source.asType());
-		if (source.getKind().isClass()) {
+		TypeName sourceType = TypeName.get(target.asType());
+		if (target.getKind().isClass()) {
 			builder.superclass(sourceType);
-		} else if (source.getKind().isInterface()) {
+		} else if (target.getKind().isInterface()) {
 			builder.addSuperinterface(sourceType);
 		}
 		TypeSpec targetType = builder.build();
@@ -58,7 +55,7 @@ public class ImplementationGenerator {
 	}
 	
 	private String getName() {
-		String sourceName = source.getSimpleName().toString();
+		String sourceName = target.getSimpleName().toString();
 		String targetName = implementation.name();
 		if (targetName.isEmpty()) {
 			targetName = implementation.nameFormat().generateName(sourceName, implementation.nameParam());
@@ -67,43 +64,32 @@ public class ImplementationGenerator {
 	}
 	
 	private String getPackageName() {
-		String sourcePackage = elements.getPackageOf(source).getQualifiedName().toString();
+		String sourcePackage = elementUtils.getPackageOf(target).getQualifiedName().toString();
 		String targetPackage = String.format(implementation.packageName(), sourcePackage);
 		ArrayDeque<String> components = new ArrayDeque<>();
-		Stream.of(targetPackage.split("\\.")).forEachOrdered(component -> {
+		for (String component : targetPackage.split("\\.")) {
 			if (component.equals("-")) {
 				components.pollLast();
 			} else {
 				components.add(component);
 			}
-		});
+		}
 		targetPackage = components.stream().collect(Collectors.joining("."));
 		return targetPackage;
 	}
 	
 	private Collection<MethodSpec> createMethodSpecs() {
-		return ElementFilter.methodsIn(elements.getAllMembers(source)).stream()
+		return ElementFilter.methodsIn(elementUtils.getAllMembers(target)).stream()
 			.filter(method -> method.getModifiers().contains(Modifier.ABSTRACT))
 			.map(this::createMethodSpec)
 			.collect(Collectors.toList());
 	}
 	
 	private MethodSpec createMethodSpec(ExecutableElement method) {
-		return MethodSpec.methodBuilder(method.getSimpleName().toString())
-			.addAnnotation(Override.class)
-			.addModifiers(getModifiers(method))
-			.returns(TypeName.get(method.getReturnType()))
-			.addTypeVariables(getTypeParameters(method))
-			.addParameters(createParameterSpecs(method))
-			.varargs(method.isVarArgs())
+		DeclaredType enclosingType = (DeclaredType) target.asType();
+		return MethodSpec.overriding(method, enclosingType, typeUtils)
 			.addStatement(buildStatement(method.getReturnType()))
 			.build();
-	}
-	
-	private Collection<ParameterSpec> createParameterSpecs(ExecutableElement method) {
-		return method.getParameters().stream()
-			.map(ParameterSpec::get)
-			.collect(Collectors.toList());
 	}
 	
 	private Collection<TypeVariableName> getTypeParameters(Parameterizable element) {
@@ -114,7 +100,7 @@ public class ImplementationGenerator {
 	
 	private Modifier[] getModifiers(Element element) {
 		return element.getModifiers().stream()
-			.filter(Predicate.isEqual(Modifier.ABSTRACT).negate())
+			.filter(modifier -> modifier != Modifier.ABSTRACT)
 			.toArray(Modifier[]::new);
 	}
 	

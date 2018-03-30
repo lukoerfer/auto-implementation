@@ -3,8 +3,11 @@ package de.lukaskoerfer.implementation.processor.methods;
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.annotations.Statement;
+import de.lukaskoerfer.implementation.annotations.StatementType;
 
+/**
+ * Base class for value type method handlers
+ */
 public abstract class ValueMethodHandler extends MethodHandler {
 
 	public ValueMethodHandler(Implementation implementation) {
@@ -19,7 +22,7 @@ public abstract class ValueMethodHandler extends MethodHandler {
 	}
 	
 	@Override
-	protected Statement getStatementType() {
+	protected StatementType getChosenStatementType() {
 		return implementation.valueMethods();
 	}
 	

@@ -18,6 +18,9 @@ import de.lukaskoerfer.implementation.annotations.Implementation;
 import de.lukaskoerfer.implementation.annotations.Implementations;
 import lombok.SneakyThrows;
 
+/**
+ * 
+ */
 @AutoService(Processor.class)
 public class ImplementationAnnotationProcessor extends AbstractProcessor {
 
@@ -43,21 +46,36 @@ public class ImplementationAnnotationProcessor extends AbstractProcessor {
 		return true;
 	}
 	
-	private void process(TypeElement source) {
-		Stream.of(source.getAnnotationsByType(Implementation.class))
-			.map(implementation -> generate(source, implementation))
+	/**
+	 * Processes a single annotated element (either interface or abstract class)
+	 * @param target
+	 */
+	private void process(TypeElement target) {
+		Stream.of(target.getAnnotationsByType(Implementation.class))
+			.map(implementation -> generate(target, implementation))
 			.forEach(this::write);
 	}
 	
-	private JavaFile generate(TypeElement source, Implementation implementation) {
+	/**
+	 * Generates a Java file for a single {@link Implementation} annotation
+	 * @param target
+	 * @param implementation
+	 * @return
+	 */
+	private JavaFile generate(TypeElement target, Implementation implementation) {
 		return ImplementationGenerator.builder()
-			.elements(processingEnv.getElementUtils())
-			.source(source)
+			.elementUtils(processingEnv.getElementUtils())
+			.typeUtils(processingEnv.getTypeUtils())
+			.target(target)
 			.implementation(implementation)
 			.build()
 			.generate();
 	}
 	
+	/**
+	 * Writes a Java file to the file system
+	 * @param file
+	 */
 	@SneakyThrows(IOException.class)
 	private void write(JavaFile file) {
 		file.writeTo(processingEnv.getFiler());

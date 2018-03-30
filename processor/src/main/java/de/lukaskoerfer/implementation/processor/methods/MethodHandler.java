@@ -5,26 +5,52 @@ import javax.lang.model.type.TypeKind;
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.annotations.Statement;
+import de.lukaskoerfer.implementation.annotations.StatementType;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Base class for method implementation
+ */
 @RequiredArgsConstructor
 public abstract class MethodHandler {
 	
 	protected final Implementation implementation;
 	
-	public CodeBlock createStatement() {
-		if (Statement.firstDefined(getStatementType(), implementation.allMethods(), Statement.RETURN) == Statement.RETURN) {
+	/**
+	 * Creates a method statement
+	 * @return A Java code block containing a statement
+	 */
+	public final CodeBlock createStatement() {
+		if (getStatementType() == StatementType.RETURN) {
 			return createReturnStatement();
 		} else {
 			return CodeBlock.of("throw new $T()", UnsupportedOperationException.class);
 		}
 	}
 	
+	private final StatementType getStatementType() {
+		return StatementType.firstDefined(getChosenStatementType(), implementation.allMethods(), StatementType.RETURN);
+	}
+	
+	/**
+	 * Extracts the statement type from the method type
+	 * @return A statement type
+	 */
+	protected abstract StatementType getChosenStatementType();
+	
+	/**
+	 * Creates a method return statement
+	 * @return A Java code block containing a statement
+	 */
 	protected abstract CodeBlock createReturnStatement();
 	
-	protected abstract Statement getStatementType();
-	
+	/**
+	 * Creates a method handler based on a given implementation policy and a specific type
+	 * @param implementation A implementation annotation
+	 * @param kind A type kind
+	 * @return A method handler
+	 * @throws IllegalArgumentException for an unsupported type kind
+	 */
 	public static MethodHandler create(Implementation implementation, TypeKind kind) {
 		switch (kind) {
 		case VOID:

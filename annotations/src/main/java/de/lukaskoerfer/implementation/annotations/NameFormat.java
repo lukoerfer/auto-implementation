@@ -4,23 +4,53 @@ import java.util.function.BiFunction;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Provides formats for the generation of a class name
+ */
 @RequiredArgsConstructor
 public enum NameFormat {
 
-	// Standard name formats
+	/**
+	 * Adds the prefix 'Default' to the base name
+	 */
 	DEFAULT((name, param) -> "Default" + name, null),
+	/**
+	 * Adds the suffix 'Adapter' to the base name
+	 */
 	ADAPTER((name, param) -> name + "Adapter", null),
+	/**
+	 * Adds the suffix 'Impl' to the base name
+	 */
 	IMPL((name, param) -> name + "Impl", null),
+	/**
+	 * Toggles the prefix 'Abstract' to / from the base name
+	 */
 	ABSTRACT((name, param) -> togglePrefix(name, "Abstract"), null),
-	// Customizable name formats
+	/**
+	 * Adds a custom prefix to the base name
+	 */
 	ADD_PREFIX((name, param) -> param + name, "Default"),
+	/**
+	 * Adds a custom suffix to the base name
+	 */
 	ADD_SUFFIX((name, param) -> name + param, "Adapter"),
+	/**
+	 * Removes a custom prefix from the base name
+	 */
 	REMOVE_PREFIX((name, param) -> removePrefix(name, param), "Abstract"),
+	/**
+	 * Generates a name by applying a custom String format with the base name as argument
+	 */
 	CUSTOM((name, param) -> String.format(param, name), "Default%s");
 	
 	private final BiFunction<String, String, String> function;
 	private final String defaultParam;
 	
+	/**
+	 * Generates a class name according to this name format
+	 * @param name A base class name
+	 * @param param A custom name parameter
+	 */
 	public String generateName(String name, String param) {
 		if (param.isEmpty()) param = defaultParam;
 		return function.apply(name, param);

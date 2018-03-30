@@ -5,8 +5,11 @@ import java.util.Objects;
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.annotations.Statement;
+import de.lukaskoerfer.implementation.annotations.StatementType;
 
+/**
+ * Implements methods that return an object
+ */
 public class ObjectMethodHandler extends MethodHandler {
 
 	public ObjectMethodHandler(Implementation implementation) {
@@ -19,7 +22,7 @@ public class ObjectMethodHandler extends MethodHandler {
 	}
 
 	@Override
-	protected Statement getStatementType() {
+	protected StatementType getChosenStatementType() {
 		return implementation.objectMethods();
 	}
 	
