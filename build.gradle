@@ -17,5 +17,5 @@ task allJavadocs(type: Javadoc) {
 	dependsOn javadocTasks
 	source javadocTasks.source
 	classpath = files(javadocTasks.classpath)
-	destinationDir file('docs')
+	destinationDir file('docs/javadoc')
 }
