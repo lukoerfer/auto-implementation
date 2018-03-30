@@ -5,3 +5,9 @@ plugins {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.16.18'
 }
+
+rootProject.publishing.publications {
+    annotations(MavenPublication) {
+        from components.java
+    }
+}

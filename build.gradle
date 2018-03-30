@@ -2,7 +2,6 @@ plugins {
     id 'maven-publish'
 }
 
-
 allprojects {
 	group = 'de.lukaskoerfer.implementations'
 	version = '0.1'
@@ -12,16 +11,11 @@ allprojects {
 	}
 }
 
-publishing {
-    publications {
-        annotations(MavenPublication) {
-        	artifactId 'annotations'
-            from project(':annotations').components.java
-        }
-        processor(MavenPublication) {
-        	artifactId 'processor'
-            from project(':processor').components.java
-        }
-
-    }
+task allJavadocs(type: Javadoc) {
+	group 'documentation'
+	def javadocTasks = getTasksByName('javadoc', true)
+	dependsOn javadocTasks
+	source javadocTasks.source
+	classpath = files(javadocTasks.classpath)
+	destinationDir file('docs')
 }
