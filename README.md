@@ -1,11 +1,11 @@
-# implementations
-Java annotation processor to create default implementations for interfaces or abstract classes
+# autoplementations
+Java annotation processor to automatically create default implementations for interfaces or abstract classes
 
 ## Motivation
 Reduce boilerplate code (and modification effort) by automatically generating default implementations of interfaces or abstract classes with lots of methods (often required when using listener interfaces). Modern IDEs can generate these implementations, but it is still necessary to manage and, if required, to modify the occuring code files manually. Also, these files won't have any direct benefit beside saving boilerplate code at some other location, so why not just save that boilerplate code, too?
 
 ## Download
-The *implementations* annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations). Just add the following lines to the `dependencies` block of your `build.gradle` file:
+The *autoplementations* annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations). Just add the following lines to the `dependencies` block of your `build.gradle` file:
 
     implementation 'de.lukaskoerfer.implementations:annotations:0.1'
     annotationProcessor 'de.lukaskoerfer.implementations:processor:0.1'
@@ -16,7 +16,7 @@ You may also download the `.jar` files manually, both for the [annotations](http
 
 ## Usage
 
-Simply add the `Implementation` annotation on an interface or abstract class. It is possible to use the annotation multiple times on the same element. The annotation processor will create a new class for each provided annotation. Each new class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
+Simply add the `Autoplementation` annotation on an interface or abstract class. It is possible to use the annotation multiple times on the same element. The annotation processor will create a new class for each provided annotation. Each new class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
 
     @Implementation
     public interface Listener {
