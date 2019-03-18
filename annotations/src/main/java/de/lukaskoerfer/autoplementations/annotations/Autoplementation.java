@@ -1,10 +1,6 @@
-package de.lukaskoerfer.implementation.annotations;
+package de.lukaskoerfer.autoplementations.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Marks an interface or abstract class for the ImplementationAnnotationProcessor
@@ -12,8 +8,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-@Repeatable(Implementations.class)
-public @interface Implementation {
+@Repeatable(Autoplementations.class)
+@Documented
+public @interface Autoplementation {
 
 	/**
 	 * Sets the name of the implementation directly
@@ -23,12 +20,12 @@ public @interface Implementation {
 	/**
 	 * Sets a format for class name generation
 	 */
-	NameFormat nameFormat() default NameFormat.DEFAULT;
+	Format format() default Format.DEFAULT;
 	
 	/**
-	 * Sets an additional parameter for some name formats
+	 * Sets an additional parameter, which may be used by the name generator
 	 */
-	String nameParam() default "";
+	String param() default "";
 	
 	/**
 	 * Sets the package name of the implementation
@@ -36,26 +33,26 @@ public @interface Implementation {
 	 * It is possible to specify a relative package name by using '%s' as a placeholder for the base package name.
 	 * To go back in the package hierarchy, use '-' as package component.
 	 */
-	String packageName() default "%s";
+	String namespace() default "%s";
 	
 	/**
 	 * Sets the type of statement to implement all methods regardless of the return type
 	 */
-	StatementType allMethods() default StatementType.RETURN;
+	Action all() default Action.RETURN;
 	
 	/**
 	 * Sets the type of statement to implement methods with the return type void
 	 */
-	StatementType voidMethods() default StatementType.DEFAULT;
+	Action voids() default Action.DEFAULT;
 	
 	/**
 	 * Sets the type of statement to implement methods with a value-type (primitive) return type
 	 */
-	StatementType valueMethods() default StatementType.DEFAULT;
+	Action values() default Action.DEFAULT;
 	
 	/**
 	 * Sets the type of statement to implement methods with a reference-type (object) return type
 	 */
-	StatementType objectMethods() default StatementType.DEFAULT;
+	Action objects() default Action.DEFAULT;
 	
 }

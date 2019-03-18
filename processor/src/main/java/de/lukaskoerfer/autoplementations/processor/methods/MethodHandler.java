@@ -1,42 +1,40 @@
-package de.lukaskoerfer.implementation.processor.methods;
+package de.lukaskoerfer.autoplementations.processor.methods;
 
 import javax.lang.model.type.TypeKind;
 
 import com.squareup.javapoet.CodeBlock;
 
-import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.annotations.StatementType;
+import de.lukaskoerfer.autoplementations.annotations.Action;
+import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Base class for method implementation
+ * Base class for method definition
  */
 @RequiredArgsConstructor
 public abstract class MethodHandler {
-	
-	protected final Implementation implementation;
 	
 	/**
 	 * Creates a method statement
 	 * @return A Java code block containing a statement
 	 */
-	public final CodeBlock createStatement() {
-		if (getStatementType() == StatementType.RETURN) {
+	public final CodeBlock generateBody(Autoplementation definition) {
+		if (extractAction(definition) == Action.RETURN) {
 			return createReturnStatement();
 		} else {
 			return CodeBlock.of("throw new $T()", UnsupportedOperationException.class);
 		}
 	}
 	
-	private final StatementType getStatementType() {
-		return StatementType.firstDefined(getChosenStatementType(), implementation.allMethods(), StatementType.RETURN);
+	private final Action extractAction(Autoplementation definition) {
+		return Action.firstNonDefault(extractPrimaryAction(definition), definition.all(), Action.RETURN);
 	}
 	
 	/**
 	 * Extracts the statement type from the method type
 	 * @return A statement type
 	 */
-	protected abstract StatementType getChosenStatementType();
+	protected abstract Action extractPrimaryAction(Autoplementation definition);
 	
 	/**
 	 * Creates a method return statement
@@ -45,34 +43,33 @@ public abstract class MethodHandler {
 	protected abstract CodeBlock createReturnStatement();
 	
 	/**
-	 * Creates a method handler based on a given implementation policy and a specific type
-	 * @param implementation A implementation annotation
+	 * Creates a method handler based on a given definition policy and a specific type
 	 * @param kind A type kind
 	 * @return A method handler
 	 * @throws IllegalArgumentException for an unsupported type kind
 	 */
-	public static MethodHandler create(Implementation implementation, TypeKind kind) {
+	public static MethodHandler forType(TypeKind kind) {
 		switch (kind) {
 		case VOID:
-			return new VoidMethodHandler(implementation);
+			return new VoidMethodHandler();
 		case BOOLEAN:
-			return new BooleanMethodHandler(implementation);
+			return new BooleanMethodHandler();
 		case BYTE:
 		case CHAR:
 		case SHORT:
 		case INT:
 		case LONG:
-			return new IntMethodHandler(implementation);
+			return new IntMethodHandler();
 		case FLOAT:
 		case DOUBLE:
-			return new FloatMethodHandler(implementation);
+			return new FloatMethodHandler();
 		case ARRAY:
 		case DECLARED:
 		case NULL:
 		case TYPEVAR:
 		case UNION:
 		case WILDCARD:
-			return new ObjectMethodHandler(implementation);
+			return new ObjectMethodHandler();
 		default:
 			throw new IllegalArgumentException();
 		}

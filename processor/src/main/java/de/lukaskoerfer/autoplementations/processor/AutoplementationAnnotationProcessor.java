@@ -1,4 +1,4 @@
-package de.lukaskoerfer.implementation.processor;
+package de.lukaskoerfer.autoplementations.processor;
 
 import java.io.IOException;
 import java.util.Set;
@@ -14,21 +14,21 @@ import javax.lang.model.element.TypeElement;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
-import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.annotations.Implementations;
+import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.annotations.AutoplementationSetup;
+import de.lukaskoerfer.autoplementations.annotations.Autoplementations;
 import lombok.SneakyThrows;
 
 /**
  * 
  */
 @AutoService(Processor.class)
-public class ImplementationAnnotationProcessor extends AbstractProcessor {
+public class AutoplementationAnnotationProcessor extends AbstractProcessor {
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return Stream.of(Implementation.class, Implementations.class)
-			.map(Class::getCanonicalName)
-			.collect(Collectors.toSet());
+		return Stream.of(Autoplementation.class, Autoplementations.class, AutoplementationSetup.class)
+			.map(Class::getCanonicalName).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ImplementationAnnotationProcessor extends AbstractProcessor {
 	
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		annotations.stream()
+		Stream.of(Autoplementation.class, Autoplementations.class)
 			.map(roundEnv::getElementsAnnotatedWith)
 			.flatMap(Set::stream)
 			.map(TypeElement.class::cast)
@@ -51,23 +51,23 @@ public class ImplementationAnnotationProcessor extends AbstractProcessor {
 	 * @param target
 	 */
 	private void process(TypeElement target) {
-		Stream.of(target.getAnnotationsByType(Implementation.class))
-			.map(implementation -> generate(target, implementation))
+		Stream.of(target.getAnnotationsByType(Autoplementation.class))
+			.map(autoplementation -> generate(target, autoplementation))
 			.forEach(this::write);
 	}
 	
 	/**
-	 * Generates a Java file for a single {@link Implementation} annotation
+	 * Generates a Java file for a single {@link Autoplementation} annotation
 	 * @param target
-	 * @param implementation
+	 * @param autoplementation
 	 * @return
 	 */
-	private JavaFile generate(TypeElement target, Implementation implementation) {
-		return ImplementationGenerator.builder()
+	private JavaFile generate(TypeElement target, Autoplementation autoplementation) {
+		return AutoplementationGenerator.builder()
 			.elementUtils(processingEnv.getElementUtils())
 			.typeUtils(processingEnv.getTypeUtils())
 			.target(target)
-			.implementation(implementation)
+			.definition(autoplementation)
 			.build()
 			.generate();
 	}

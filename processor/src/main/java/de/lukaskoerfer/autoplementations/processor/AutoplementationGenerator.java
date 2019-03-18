@@ -1,4 +1,4 @@
-package de.lukaskoerfer.implementation.processor;
+package de.lukaskoerfer.autoplementations.processor;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -25,25 +25,25 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-import de.lukaskoerfer.implementation.annotations.Implementation;
-import de.lukaskoerfer.implementation.processor.methods.MethodHandler;
+import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.processor.methods.MethodHandler;
 import lombok.Builder;
 
 @Builder
-public class ImplementationGenerator {
+public class AutoplementationGenerator {
 	
 	private final Elements elementUtils;
 	private final Types typeUtils;
 	
-	private final Implementation implementation;
+	private final Autoplementation definition;
 	private final TypeElement target;
 	
 	public JavaFile generate() {
-		TypeSpec.Builder builder = TypeSpec.classBuilder(getName())
-			.addAnnotation(createGeneratedAnnotation())
-			.addModifiers(getModifiers(target))
-			.addTypeVariables(getTypeParameters(target))
-			.addMethods(createMethodSpecs());
+		TypeSpec.Builder builder = TypeSpec.classBuilder(generateName())
+			.addAnnotation(buildGeneratedAnnotation())
+			.addModifiers(extractModifiers(target))
+			.addTypeVariables(extractTypeParameters(target))
+			.addMethods(generateMethods());
 		TypeName sourceType = TypeName.get(target.asType());
 		if (target.getKind().isClass()) {
 			builder.superclass(sourceType);
@@ -51,21 +51,21 @@ public class ImplementationGenerator {
 			builder.addSuperinterface(sourceType);
 		}
 		TypeSpec targetType = builder.build();
-		return JavaFile.builder(getPackageName(), targetType).build();
+		return JavaFile.builder(generateNamespace(), targetType).build();
 	}
 	
-	private String getName() {
+	private String generateName() {
 		String sourceName = target.getSimpleName().toString();
-		String targetName = implementation.name();
+		String targetName = definition.name();
 		if (targetName.isEmpty()) {
-			targetName = implementation.nameFormat().generateName(sourceName, implementation.nameParam());
+			targetName = definition.format().apply(sourceName, definition.param());
 		}
 		return targetName;
 	}
 	
-	private String getPackageName() {
+	private String generateNamespace() {
 		String sourcePackage = elementUtils.getPackageOf(target).getQualifiedName().toString();
-		String targetPackage = String.format(implementation.packageName(), sourcePackage);
+		String targetPackage = String.format(definition.namespace(), sourcePackage);
 		ArrayDeque<String> components = new ArrayDeque<>();
 		for (String component : targetPackage.split("\\.")) {
 			if (component.equals("-")) {
@@ -78,43 +78,43 @@ public class ImplementationGenerator {
 		return targetPackage;
 	}
 	
-	private Collection<MethodSpec> createMethodSpecs() {
+	private Collection<MethodSpec> generateMethods() {
 		return ElementFilter.methodsIn(elementUtils.getAllMembers(target)).stream()
 			.filter(method -> method.getModifiers().contains(Modifier.ABSTRACT))
-			.map(this::createMethodSpec)
+			.map(this::generateMethod)
 			.collect(Collectors.toList());
 	}
 	
-	private MethodSpec createMethodSpec(ExecutableElement method) {
+	private MethodSpec generateMethod(ExecutableElement method) {
 		DeclaredType enclosingType = (DeclaredType) target.asType();
 		return MethodSpec.overriding(method, enclosingType, typeUtils)
-			.addStatement(buildStatement(method.getReturnType()))
+			.addStatement(generateStatement(method.getReturnType()))
 			.build();
 	}
 	
-	private Collection<TypeVariableName> getTypeParameters(Parameterizable element) {
+	private Collection<TypeVariableName> extractTypeParameters(Parameterizable element) {
 		return element.getTypeParameters().stream()
 			.map(TypeVariableName::get)
 			.collect(Collectors.toList());
 	}
 	
-	private Modifier[] getModifiers(Element element) {
+	private static Modifier[] extractModifiers(Element element) {
 		return element.getModifiers().stream()
 			.filter(modifier -> modifier != Modifier.ABSTRACT)
 			.toArray(Modifier[]::new);
 	}
 	
-	private AnnotationSpec createGeneratedAnnotation() {
+	private static AnnotationSpec buildGeneratedAnnotation() {
 		return AnnotationSpec
 			.builder(Generated.class)
-			.addMember("value", "$S", ImplementationGenerator.class.getName())
+			.addMember("value", "$S", AutoplementationGenerator.class.getName())
 			// .addMember("date", "$S", LocalDate.now().format(DateTimeFormatter.ISO_DATE_TIME))
 			.build();
 	}
 	
-	private CodeBlock buildStatement(TypeMirror returnType) {
+	private CodeBlock generateStatement(TypeMirror returnType) {
 		TypeKind typeKind = returnType.getKind();
-		return MethodHandler.create(implementation, typeKind).createStatement();
+		return MethodHandler.forType(typeKind).generateBody(definition);
 	}
 	
 }

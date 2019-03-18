@@ -1,4 +1,4 @@
-package de.lukaskoerfer.implementation.annotations;
+package de.lukaskoerfer.autoplementations.annotations;
 
 import java.util.function.BiFunction;
 
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  * Provides formats for the generation of a class name
  */
 @RequiredArgsConstructor
-public enum NameFormat {
+public enum Format {
 
 	/**
 	 * Adds the prefix 'Default' to the base name
@@ -51,7 +51,7 @@ public enum NameFormat {
 	 * @param name A base class name
 	 * @param param A custom name parameter
 	 */
-	public String generateName(String name, String param) {
+	public String apply(String name, String param) {
 		if (param.isEmpty()) param = defaultParam;
 		return function.apply(name, param);
 	}

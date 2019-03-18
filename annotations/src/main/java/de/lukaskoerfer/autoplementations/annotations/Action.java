@@ -1,4 +1,4 @@
-package de.lukaskoerfer.implementation.annotations;
+package de.lukaskoerfer.autoplementations.annotations;
 
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 /**
  * Provides statement types for method implementation
  */
-public enum StatementType {
+public enum Action {
 	
 	/**
 	 * Default option, does not represent any statement
@@ -22,12 +22,12 @@ public enum StatementType {
 	THROW;
 	
 	/**
-	 * Returns the first {@link StatementType} <b>not</b> equal to {@link DEFAULT}
-	 * @param statements
+	 * Returns the first {@link Action} <b>not</b> equal to Action.Default
+	 * @param actions
 	 * @return
 	 */
-	public static StatementType firstDefined(StatementType... statements) {
-		return Stream.of(statements)
+	public static Action firstNonDefault(Action... actions) {
+		return Stream.of(actions)
 			.filter(Predicate.isEqual(DEFAULT).negate())
 			.findFirst()
 			.get();
