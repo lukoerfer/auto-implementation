@@ -16,7 +16,7 @@ You may also download the `.jar` files manually, both for the [annotations](http
 
 ## Usage
 
-Simply add the `Autoplementation` annotation on an interface or abstract class. It is possible to use the annotation multiple times on the same element. The annotation processor will create a new class for each provided annotation. Each new class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
+Simply add the `Autoplementation` annotation on an interface or abstract class. The generated class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
 
     @Autoplementation
     public interface Listener {
@@ -39,7 +39,7 @@ Generated code:
         }
     }
     
-The annotation provides several parameters to modify the name, package and method statements of the implementation class. For detailed information check out [the wiki](https://github.com/lukoerfer/implementations/wiki/Usage).
+The annotation provides several parameters to modify the name, the package and implementation details for the generated class. For detailed information check out [the wiki](https://github.com/lukoerfer/implementations/wiki/Usage).
 
 ## License
 
