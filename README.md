@@ -7,8 +7,10 @@ Reduce boilerplate code (and modification effort) by automatically generating de
 ## Download
 The *autoplementations* annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations). Just add the following lines to the `dependencies` block of your `build.gradle` file:
 
-    implementation 'de.lukaskoerfer.implementations:annotations:0.1'
-    annotationProcessor 'de.lukaskoerfer.implementations:processor:0.1'
+``` gradle
+implementation 'de.lukaskoerfer.implementations:annotations:0.1'
+annotationProcessor 'de.lukaskoerfer.implementations:processor:0.1'
+```
 
 For the usage with an IDE, we suggest using the [gradle-apt-plugin](https://github.com/tbroyer/gradle-apt-plugin).
 
@@ -18,26 +20,30 @@ You may also download the `.jar` files manually, both for the [annotations](http
 
 Simply add the `Autoplementation` annotation on an interface or abstract class. The generated class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
 
-    @Autoplementation
-    public interface Listener {
-        boolean isActive();
-        void onShow();
-        void onHide();
-    }
+``` java
+@Autoplementation
+public interface Listener {
+    boolean isActive();
+    void onShow();
+    void onHide();
+}
+```
     
 Generated code:
 
-    public class DefaultListener implements Listener {
-        public boolean isActive() {
-            return false;
-        }
-        public void onShow() {
-            return;
-        }
-        public void onHide() {
-            return;
-        }
+``` java
+public class DefaultListener implements Listener {
+    public boolean isActive() {
+        return false;
     }
+    public void onShow() {
+        return;
+    }
+    public void onHide() {
+        return;
+    }
+}
+```
     
 The annotation provides several parameters to modify the name, the package and implementation details for the generated class. For detailed information check out [the wiki](https://github.com/lukoerfer/implementations/wiki/Usage).
 
