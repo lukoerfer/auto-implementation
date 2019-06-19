@@ -1,8 +1,8 @@
-# autoplementations
+# Autoplementations
 Java annotation processor to automatically create default implementations for interfaces or abstract classes
 
 ## Motivation
-Reduce boilerplate code (and modification effort) by automatically generating default implementations of interfaces or abstract classes with lots of methods (often required when using listener interfaces). Modern IDEs can generate these implementations, but it is still necessary to manage and, if required, to modify the occuring code files manually. Also, these files won't have any direct benefit beside saving boilerplate code at some other location, so why not just save that boilerplate code, too?
+Simply reduce boilerplate code (and modification effort) by automatically generating default implementations of interfaces and abstract classes with lots of methods (often required when using listener interfaces)! Modern IDEs can generate these implementations, but it is still necessary to manage and to modify the resulting code files manually. Also, such files usually  don't have any direct benefit beside saving boilerplate code at some other location, so why not just save that boilerplate code, too?
 
 ## Download
 The *autoplementations* annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations). Just add the following lines to the `dependencies` block of your `build.gradle` file:
