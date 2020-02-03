@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Bundles multiple {@link Autoplementation} annotations
+ * Bundles multiple {@link AutoImplementation} annotations
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-public @interface Autoplementations {
+public @interface AutoImplementations {
 	
-	Autoplementation[] value() default {};
+	AutoImplementation[] value() default {};
 	
 }

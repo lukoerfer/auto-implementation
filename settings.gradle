@@ -1,1 +1,1 @@
-include 'annotations', 'processor', 'samples'
+include 'annotations', 'processor'

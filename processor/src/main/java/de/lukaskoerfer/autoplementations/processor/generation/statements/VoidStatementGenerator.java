@@ -1,14 +1,14 @@
-package de.lukaskoerfer.autoplementations.processor.methods;
+package de.lukaskoerfer.autoplementations.processor.generation.statements;
 
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.autoplementations.annotations.Action;
-import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementation;
 
 /**
  * Implements methods with the return type void
  */
-public class VoidMethodHandler extends MethodHandler {
+public class VoidStatementGenerator extends StatementGenerator {
 
 	@Override
 	public CodeBlock createReturnStatement() {
@@ -16,7 +16,7 @@ public class VoidMethodHandler extends MethodHandler {
 	}
 
 	@Override
-	protected Action extractPrimaryAction(Autoplementation definition) {
+	protected Action extractPrimaryAction(AutoImplementation definition) {
 		return definition.voids();
 	}
 

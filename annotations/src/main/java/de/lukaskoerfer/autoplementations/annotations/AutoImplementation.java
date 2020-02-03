@@ -8,9 +8,9 @@ import java.lang.annotation.*;
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
-@Repeatable(Autoplementations.class)
+@Repeatable(AutoImplementations.class)
 @Documented
-public @interface Autoplementation {
+public @interface AutoImplementation {
 
 	/**
 	 * Sets the name of the implementation directly

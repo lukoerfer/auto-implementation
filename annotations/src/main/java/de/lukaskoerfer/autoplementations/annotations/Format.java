@@ -37,7 +37,7 @@ public enum Format {
 	/**
 	 * Removes a custom prefix from the base name
 	 */
-	REMOVE_PREFIX((name, param) -> removePrefix(name, param), "Abstract"),
+	REMOVE_PREFIX(Format::removePrefix, "Abstract"),
 	/**
 	 * Generates a name by applying a custom String format with the base name as argument
 	 */

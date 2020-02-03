@@ -1,21 +1,12 @@
 plugins {
-    id 'maven-publish'
+    id 'io.freefair.aggregate-javadoc' version '4.1.6'
 }
 
-allprojects {
-	group = 'de.lukaskoerfer.implementations'
+subprojects {
+	group = 'de.lukaskoerfer.auto-implementation'
 	version = '0.1'
 
 	repositories {
 		jcenter()
 	}
-}
-
-task allJavadocs(type: Javadoc) {
-	group 'documentation'
-	def javadocTasks = getTasksByName('javadoc', true)
-	dependsOn javadocTasks
-	source javadocTasks.source
-	classpath = files(javadocTasks.classpath)
-	destinationDir file('docs/javadoc')
 }

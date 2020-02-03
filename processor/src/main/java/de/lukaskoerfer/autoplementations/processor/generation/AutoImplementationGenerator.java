@@ -1,10 +1,9 @@
-package de.lukaskoerfer.autoplementations.processor;
+package de.lukaskoerfer.autoplementations.processor.generation;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import javax.annotation.Generated;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -17,7 +16,6 @@ import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -25,22 +23,22 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeVariableName;
 
-import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
-import de.lukaskoerfer.autoplementations.processor.methods.MethodHandler;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementation;
+import de.lukaskoerfer.autoplementations.processor.generation.statements.StatementGenerator;
 import lombok.Builder;
 
 @Builder
-public class AutoplementationGenerator {
+public class AutoImplementationGenerator {
 	
 	private final Elements elementUtils;
 	private final Types typeUtils;
 	
-	private final Autoplementation definition;
+	private final AutoImplementation definition;
 	private final TypeElement target;
 	
 	public JavaFile generate() {
 		TypeSpec.Builder builder = TypeSpec.classBuilder(generateName())
-			.addAnnotation(buildGeneratedAnnotation())
+			// .addAnnotation(buildGeneratedAnnotation())
 			.addModifiers(extractModifiers(target))
 			.addTypeVariables(extractTypeParameters(target))
 			.addMethods(generateMethods());
@@ -74,7 +72,7 @@ public class AutoplementationGenerator {
 				components.add(component);
 			}
 		}
-		targetPackage = components.stream().collect(Collectors.joining("."));
+		targetPackage = String.join(".", components);
 		return targetPackage;
 	}
 	
@@ -103,18 +101,20 @@ public class AutoplementationGenerator {
 			.filter(modifier -> modifier != Modifier.ABSTRACT)
 			.toArray(Modifier[]::new);
 	}
-	
+
+	/*
 	private static AnnotationSpec buildGeneratedAnnotation() {
 		return AnnotationSpec
 			.builder(Generated.class)
-			.addMember("value", "$S", AutoplementationGenerator.class.getName())
+			.addMember("value", "$S", AutoImplementationGenerator.class.getName())
 			// .addMember("date", "$S", LocalDate.now().format(DateTimeFormatter.ISO_DATE_TIME))
 			.build();
 	}
+	 */
 	
 	private CodeBlock generateStatement(TypeMirror returnType) {
-		TypeKind typeKind = returnType.getKind();
-		return MethodHandler.forType(typeKind).generateBody(definition);
+		return StatementGenerator.forMethodReturnType(returnType.getKind())
+			.generateBody(definition);
 	}
 	
 }

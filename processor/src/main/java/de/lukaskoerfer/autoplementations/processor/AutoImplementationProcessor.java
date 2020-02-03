@@ -14,20 +14,21 @@ import javax.lang.model.element.TypeElement;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 
-import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementation;
 import de.lukaskoerfer.autoplementations.annotations.AutoplementationSetup;
-import de.lukaskoerfer.autoplementations.annotations.Autoplementations;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementations;
+import de.lukaskoerfer.autoplementations.processor.generation.AutoImplementationGenerator;
 import lombok.SneakyThrows;
 
 /**
  * 
  */
 @AutoService(Processor.class)
-public class AutoplementationAnnotationProcessor extends AbstractProcessor {
+public class AutoImplementationProcessor extends AbstractProcessor {
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return Stream.of(Autoplementation.class, Autoplementations.class, AutoplementationSetup.class)
+		return Stream.of(AutoImplementation.class, AutoImplementations.class, AutoplementationSetup.class)
 			.map(Class::getCanonicalName).collect(Collectors.toSet());
 	}
 
@@ -38,7 +39,7 @@ public class AutoplementationAnnotationProcessor extends AbstractProcessor {
 	
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		Stream.of(Autoplementation.class, Autoplementations.class)
+		Stream.of(AutoImplementation.class, AutoImplementations.class)
 			.map(roundEnv::getElementsAnnotatedWith)
 			.flatMap(Set::stream)
 			.map(TypeElement.class::cast)
@@ -51,23 +52,23 @@ public class AutoplementationAnnotationProcessor extends AbstractProcessor {
 	 * @param target
 	 */
 	private void process(TypeElement target) {
-		Stream.of(target.getAnnotationsByType(Autoplementation.class))
+		Stream.of(target.getAnnotationsByType(AutoImplementation.class))
 			.map(autoplementation -> generate(target, autoplementation))
 			.forEach(this::write);
 	}
 	
 	/**
-	 * Generates a Java file for a single {@link Autoplementation} annotation
+	 * Generates a Java file for a single {@link AutoImplementation} annotation
 	 * @param target
-	 * @param autoplementation
+	 * @param autoImplementation
 	 * @return
 	 */
-	private JavaFile generate(TypeElement target, Autoplementation autoplementation) {
-		return AutoplementationGenerator.builder()
+	private JavaFile generate(TypeElement target, AutoImplementation autoImplementation) {
+		return AutoImplementationGenerator.builder()
 			.elementUtils(processingEnv.getElementUtils())
 			.typeUtils(processingEnv.getTypeUtils())
 			.target(target)
-			.definition(autoplementation)
+			.definition(autoImplementation)
 			.build()
 			.generate();
 	}

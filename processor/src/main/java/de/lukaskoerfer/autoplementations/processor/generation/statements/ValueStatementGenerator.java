@@ -1,14 +1,14 @@
-package de.lukaskoerfer.autoplementations.processor.methods;
+package de.lukaskoerfer.autoplementations.processor.generation.statements;
 
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.autoplementations.annotations.Action;
-import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementation;
 
 /**
  * Base class for value type method handlers
  */
-public abstract class ValueMethodHandler extends MethodHandler {
+public abstract class ValueStatementGenerator extends StatementGenerator {
 
 	@Override
 	public CodeBlock createReturnStatement() {
@@ -18,7 +18,7 @@ public abstract class ValueMethodHandler extends MethodHandler {
 	protected abstract String getDefaultReturnValue();
 	
 	@Override
-	protected final Action extractPrimaryAction(Autoplementation definition) {
+	protected final Action extractPrimaryAction(AutoImplementation definition) {
 		return definition.values();
 	}
 	

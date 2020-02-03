@@ -1,17 +1,14 @@
 plugins {
-	id 'java'
+    id 'java'
+    id 'io.freefair.lombok' version '4.1.6'
+    id 'io.freefair.maven-publish-java'
+    id 'io.freefair.maven-jars'
 }
 
 dependencies {
-	compile project(':annotations')
-	compile 'com.squareup:javapoet:1.10.0'
-	compileOnly 'org.projectlombok:lombok:1.16.18'
-    compileOnly 'com.google.auto.service:auto-service:1.0-rc4'
-}
-
-rootProject.publishing.publications {
-    processor(MavenPublication) {
-        from components.java
-    }
+	implementation project(':annotations')
+	implementation 'com.squareup:javapoet:1.12.1'
+    compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc6'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0-rc6'
 }
 

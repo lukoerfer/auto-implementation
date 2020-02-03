@@ -1,16 +1,16 @@
-package de.lukaskoerfer.autoplementations.processor.methods;
+package de.lukaskoerfer.autoplementations.processor.generation.statements;
 
 import java.util.Objects;
 
 import com.squareup.javapoet.CodeBlock;
 
 import de.lukaskoerfer.autoplementations.annotations.Action;
-import de.lukaskoerfer.autoplementations.annotations.Autoplementation;
+import de.lukaskoerfer.autoplementations.annotations.AutoImplementation;
 
 /**
  * Implements methods that return an object
  */
-public class ObjectMethodHandler extends MethodHandler {
+public class ObjectStatementGenerator extends StatementGenerator {
 
 	@Override
 	public CodeBlock createReturnStatement() {
@@ -18,7 +18,7 @@ public class ObjectMethodHandler extends MethodHandler {
 	}
 
 	@Override
-	protected Action extractPrimaryAction(Autoplementation definition) {
+	protected Action extractPrimaryAction(AutoImplementation definition) {
 		return definition.objects();
 	}
 	
