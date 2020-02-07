@@ -10,7 +10,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Parameterizable;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
@@ -55,15 +54,12 @@ public class AutoImplementationGenerator {
 	private String generateName() {
 		String sourceName = target.getSimpleName().toString();
 		String targetName = definition.name();
-		if (targetName.isEmpty()) {
-			targetName = definition.format().apply(sourceName, definition.param());
-		}
-		return targetName;
+		return targetName.isEmpty() ? "Default" + sourceName : targetName;
 	}
 	
 	private String generateNamespace() {
 		String sourcePackage = elementUtils.getPackageOf(target).getQualifiedName().toString();
-		String targetPackage = String.format(definition.namespace(), sourcePackage);
+		String targetPackage = definition.pkg().replace("#", sourcePackage);
 		ArrayDeque<String> components = new ArrayDeque<>();
 		for (String component : targetPackage.split("\\.")) {
 			if (component.equals("-")) {
@@ -72,8 +68,7 @@ public class AutoImplementationGenerator {
 				components.add(component);
 			}
 		}
-		targetPackage = String.join(".", components);
-		return targetPackage;
+		return String.join(".", components);
 	}
 	
 	private Collection<MethodSpec> generateMethods() {

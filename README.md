@@ -8,7 +8,7 @@ Modern IDEs can generate these implementations, but it is still necessary to man
 
 ## Installation
 <!--
-The *autoplementations* annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations).
+The annotation processor is available via [JCenter](https://bintray.com/lukoerfer/maven-release-remote/de.lukaskoerfer.implementations).
 Just add the following lines to the `dependencies` block of your `build.gradle` file:
 
 ``` gradle
@@ -22,20 +22,19 @@ You may also download the `.jar` files manually, both for the [annotations](http
 -->
 
 ## Usage
-<!--
-Simply add the `Autoplementation` annotation on an interface or abstract class.
+Simply add the annotation `Implementation` on an interface or abstract class.
 The generated class will implement the annotated interface (or extend the annotated abstract class) by implementing each unimplemented method:
 
 ``` java
-@Autoplementation
+@AutoImplementation
 public interface Listener {
     boolean isActive();
     void onShow();
     void onHide();
 }
 ```
-    
-Generated code:
+
+
 
 ``` java
 public class DefaultListener implements Listener {
@@ -50,10 +49,48 @@ public class DefaultListener implements Listener {
     }
 }
 ```
-    
-The annotation provides several parameters to modify the name, the package and implementation details for the generated class.
-For detailed information check out [the wiki](https://github.com/lukoerfer/implementations/wiki/Usage).
--->
+
+
+
+### Target package
+
+By default, the implementation class will be put into the same package as the annotated element. Using the **pkg** parameter, you can modify the target package.
+Either specify an absolute package name or use `#` as placeholder for the package name of the annotated element (for relative package names):
+
+``` java
+@AutoImplementation(pkg = "#.implementation")
+// "com.example.interfaces" => "com.example.interfaces.implementation"
+```
+
+You can use hyphens (`-`) as package components to walk back in the package tree:
+
+``` java
+@AutoImplementation(pkg = "#.-.implementation")
+// "com.example.interfaces" => "com.example.implementation"
+```
+
+### Method implementation
+
+The annotation processor can implement a method in two different ways:
+   
+* Return a return-type specific default value (`false` for booleans, `0` for integers, `0.0` for floats, `null` for objects)
+* Throw an `UnsupportedOperationException`
+
+Depending on the use case, one can decide which statements should be used to implement the interface or abstract class by using the **all** parameter on the annotation:
+
+``` java
+@AutoImplementation(all = StatementType.THROW)
+```
+
+The example above will cause any method on the implemented class to throw an `UnsupportedOperationException` when invoked.
+
+To handle methods with different return-types differently, one can use the parameters **voids**, **values** and **objects**. The setting on each the those parameters will overwrite the setting on the **all** parameters if it differs from `StatementType.Default`:
+
+``` java
+@AutoImplementation(objects = StatementType.THROW)
+```
+
+The example above will generate a class implementation, that will throw an `UnsupportedOperationException` for each method with a non-primitive (and non-void) return-type.
 
 ## License
 The software is licensed under the [MIT License](LICENSE).
