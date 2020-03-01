@@ -1,5 +1,6 @@
 plugins {
     id 'io.freefair.aggregate-javadoc' version '4.1.6'
+	id 'com.github.breadmoirai.github-release' version '2.2.9'
 }
 
 subprojects {
@@ -9,4 +10,8 @@ subprojects {
 	repositories {
 		jcenter()
 	}
+}
+
+githubRelease {
+	authorization = System.getenv('')
 }

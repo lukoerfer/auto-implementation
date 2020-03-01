@@ -8,7 +8,19 @@ plugins {
 dependencies {
 	implementation project(':annotations')
 	implementation 'com.squareup:javapoet:1.12.1'
+    // Annotation processors
+    implementation 'com.google.dagger:dagger:2.26'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.26'
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0-rc6'
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc6'
+    // Test dependencies
+    testImplementation 'junit:junit:4.13'
+    testImplementation 'org.mockito:mockito-core:3.3.0'
+    testImplementation 'com.google.testing.compile:compile-testing:0.18'
 }
 
+generateLombokConfig.enabled = false
+
+test {
+    useJUnit()
+}

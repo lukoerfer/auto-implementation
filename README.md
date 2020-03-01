@@ -76,7 +76,7 @@ The annotation processor can implement a method in two different ways:
 * Return a return-type specific default value (`false` for booleans, `0` for integers, `0.0` for floats, `null` for objects)
 * Throw an `UnsupportedOperationException`
 
-Depending on the use case, one can decide which statements should be used to implement the interface or abstract class by using the **all** parameter on the annotation:
+Depending on the use case, one can decide which methods should be used to implement the interface or abstract class by using the **all** parameter on the annotation:
 
 ``` java
 @AutoImplementation(all = StatementType.THROW)
